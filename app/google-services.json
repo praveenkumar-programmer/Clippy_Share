@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "994326545204",
+    "project_id": "clippy-share",
+    "storage_bucket": "clippy-share.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:994326545204:android:df49743c6a90ac77639b61",
+        "android_client_info": {
+          "package_name": "com.geeks4ever.clippyshare"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "994326545204-9g6revift5f86u0lav8c9jrg1tokofbn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAK9xToXcSDpyQEMqj-fvgVl9f23oFOww8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "994326545204-9g6revift5f86u0lav8c9jrg1tokofbn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

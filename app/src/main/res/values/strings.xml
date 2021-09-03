@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Clippy Share</string>
+
+
+    <string name="login">LOGIN</string>
+    <string name="e_mail">E-Mail</string>
+    <string name="sign_up">sign up</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm Password</string>
+
+</resources>
