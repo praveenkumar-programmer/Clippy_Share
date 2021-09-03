@@ -1,32 +1,47 @@
+/*
+ * Created by Praveen Kumar for Clippy Share.
+ * Copyright (c) 2021.
+ * Last modified on 03/09/21, 9:32 PM.
+ *
+ * This file/part of Clippy Share is OpenSource.
+ *
+ * Clippy Share is a free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ *
+ * Clippy Share is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with Clippy Share.
+ * If not, see http://www.gnu.org/licenses/.
+ */
+
 package com.geeks4ever.clippyshare.view
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.FrameLayout
-import androidx.lifecycle.Observer
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.geeks4ever.clippyshare.R
 import com.geeks4ever.clippyshare.model.UrlModel
 import com.geeks4ever.clippyshare.view.dialog.AddUrlDialog
 import com.geeks4ever.clippyshare.view.viewHolder.UrlViewHolder
 import com.geeks4ever.clippyshare.viewModel.HomeViewModel
-import com.google.android.material.textview.MaterialTextView
-import com.google.firebase.auth.FirebaseUser
 import kotlinx.android.synthetic.main.home_page.*
 
 class HomePage : AppCompatActivity() {
 
     private lateinit var viewModel: HomeViewModel
-    private lateinit var adapter: FirebaseRecyclerAdapter<UrlModel, UrlViewHolder>
+    private var adapter: FirebaseRecyclerAdapter<UrlModel, UrlViewHolder>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -45,14 +60,13 @@ class HomePage : AppCompatActivity() {
             AndroidViewModelFactory(this.application)
         )[HomeViewModel::class.java]
 
-        viewModel.getCurrentUser().observeForever { firebaseUser ->
+        viewModel.fireBaseUser.observeForever { firebaseUser ->
             if (firebaseUser == null) {
                 gotoLogin()
-                finish()
             }
         }
 
-        viewModel.getLoadingStatus().observe(this,
+        viewModel.loading.observe(this,
             { aBoolean ->
                 if (aBoolean) {
                     home_screen_progress.visibility = View.VISIBLE
@@ -61,12 +75,12 @@ class HomePage : AppCompatActivity() {
                 }
             })
 
-        viewModel.getErrorStatus().observeForever { s ->
+        viewModel.error.observeForever { s ->
             if (s != null) {
                 if (home_screen_status_text.visibility != View.VISIBLE) home_screen_status_text.visibility =
                     View.VISIBLE
                 home_screen_status_text.text = s
-                Handler().postDelayed({
+                Handler(Looper.getMainLooper()).postDelayed({
                     home_screen_status_text.text = ""
                     if (home_screen_status_text.visibility == View.VISIBLE) home_screen_status_text.visibility =
                         View.GONE
@@ -76,7 +90,16 @@ class HomePage : AppCompatActivity() {
 
         home_screen_add_url_button.setOnClickListener { addUrlToFirebase("") }
 
-        adapter = viewModel.adapter
+        viewModel.adapter.observeForever{
+
+            it?.let{
+
+                adapter = it
+            }
+
+
+        }
+
         home_screen_posts_recycler_view.adapter = adapter
 
         when (intent?.action) {
@@ -100,12 +123,12 @@ class HomePage : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        adapter.startListening()
+        adapter?.startListening()
     }
 
     override fun onPause() {
         super.onPause()
-        adapter.startListening()
+        adapter?.startListening()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -135,6 +158,7 @@ class HomePage : AppCompatActivity() {
 
     private fun gotoLogin() {
         startActivity(Intent(this, Login::class.java))
+        finish()
     }
 
 
